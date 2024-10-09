@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
+import com.api.product.constant.AppConstants;
 import com.api.product.dto.ProductDTO;
 import com.api.product.exception.ResourceNotFoundException;
 import com.api.product.model.ProductEntity;
@@ -22,11 +23,11 @@ public class ProductService {
 
     public ProductEntity createProduct(ProductDTO productDTO) { 
         if (productDTO.getName() == null || productDTO.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Product name cannot be null or empty");
+            throw new IllegalArgumentException(AppConstants.PRODUCT_NAME_NULL);
         }
         
         if (productDTO.getPrice() <= 0) {
-            throw new IllegalArgumentException("Product price must be greater than zero");
+            throw new IllegalArgumentException(AppConstants.PRICE_MORE_ZERO);
         }
         
         ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
@@ -44,28 +45,28 @@ public class ProductService {
 
     public String deleteById(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException("Product ID must be provided.");
+            throw new IllegalArgumentException(AppConstants.PRODUCT_ID_NULL);
         }
 
         if (!productRepository.existsById(id)) {
             throw new ResourceNotFoundException(id);
         }
         productRepository.deleteById(id);
-        return "Product with id " + id + " has been successfully deleted."; 
+        return (AppConstants.DELETE_COMPLETE + id); 
     }
 
     public ProductEntity updateProduct(ProductDTO productDTO) {
         ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
         if (productDTO.getName() == null || productDTO.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Product name cannot be null or empty");
+            throw new IllegalArgumentException(AppConstants.PRODUCT_NAME_NULL);
         }
         
         if (productDTO.getPrice() <= 0) {
-            throw new IllegalArgumentException("Product price must be greater than zero");
+            throw new IllegalArgumentException(AppConstants.PRICE_MORE_ZERO);
         }
         
         productRepository.findById(product.getId())
-            .orElseThrow(() -> new ResourceAccessException("Product not found with id: " + product.getId()));
+            .orElseThrow(() -> new ResourceAccessException(AppConstants.PRODUCT_NOT_FOUND + product.getId()));
 
         return productRepository.save(product);
     }
