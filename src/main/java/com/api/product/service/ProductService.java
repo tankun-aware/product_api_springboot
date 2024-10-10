@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -20,6 +21,7 @@ public class ProductService {
     private ProductRepository productRepository;
     @Autowired
     private ModelMapper modelMapper;
+    
 
     public ProductEntity createProduct(ProductDTO productDTO) { 
         if (productDTO.getName() == null || productDTO.getName().trim().isEmpty()) {
@@ -29,7 +31,7 @@ public class ProductService {
         if (productDTO.getPrice() <= 0) {
             throw new IllegalArgumentException(AppConstants.PRICE_MORE_ZERO);
         }
-        
+        productDTO.setId(null);
         ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
         return productRepository.save(product);
     }
@@ -56,7 +58,6 @@ public class ProductService {
     }
 
     public ProductEntity updateProduct(ProductDTO productDTO) {
-        ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
         if (productDTO.getName() == null || productDTO.getName().trim().isEmpty()) {
             throw new IllegalArgumentException(AppConstants.PRODUCT_NAME_NULL);
         }
@@ -64,12 +65,19 @@ public class ProductService {
         if (productDTO.getPrice() <= 0) {
             throw new IllegalArgumentException(AppConstants.PRICE_MORE_ZERO);
         }
+        ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
         
         productRepository.findById(product.getId())
             .orElseThrow(() -> new ResourceAccessException(AppConstants.PRODUCT_NOT_FOUND + product.getId()));
 
         return productRepository.save(product);
     }
+
+    public Page<ProductEntity> getPageProduct(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable);
+    }
+
 
 
 }

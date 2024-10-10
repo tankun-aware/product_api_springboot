@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.*;
 
 import com.api.product.constant.AppConstants;
 import com.api.product.dto.ProductDTO;
 import com.api.product.model.ProductEntity;
 import com.api.product.service.ProductService;
+
+
 
 @RestController
 @RequestMapping("api/products")
@@ -26,7 +29,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ProductEntity>> getAllProduct() {
         List<ProductEntity> products = productService.getAllProduct();
         return ResponseEntity.ok(products);
@@ -51,4 +54,15 @@ public class ProductController {
         ProductEntity updatedProduct = productService.updateProduct(productDTO);
         return ResponseEntity.ok(updatedProduct);
     }
+
+
+    @GetMapping
+    public ResponseEntity<List<ProductEntity>> getPageProduct(@RequestParam(defaultValue = "1") int page) {
+        int size = 10; 
+        Page<ProductEntity> pageProduct = productService.getPageProduct(page - 1, size);
+        List<ProductEntity> products = pageProduct.getContent();
+        return ResponseEntity.ok(products);
+    }
+
+    
 }
