@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export PGPASSWORD='Srg9PUT8gGiLU6365ZHlMyhnzlxZoOEE'
 
