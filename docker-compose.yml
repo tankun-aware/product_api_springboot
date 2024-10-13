@@ -13,8 +13,9 @@ services:
     volumes:
       - ./data_test:/var/lib/postgresql/data
       - ./dump:/dump
+      - ./setup.sh:/setup.sh
 
-  busking:
+  product:
     build:
       context: .
       dockerfile: Dockerfile
