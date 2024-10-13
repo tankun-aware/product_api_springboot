@@ -30,3 +30,8 @@ jobs:
       - name: Execute start.sh script
         run: |
           docker exec -i postgres-container sh -c "chmod +x ./setup.sh && ./setup.sh"
+
+      - name: Test API Endpoint
+        run: |
+          response=$(curl -s http://localhost:8080/api/products/all)
+          echo "Response from API: $response"
