@@ -6,11 +6,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
 
 import com.api.product.constant.AppConstants;
 import com.api.product.dto.ProductDTO;
-import com.api.product.exception.ResourceNotFoundException;
 import com.api.product.model.ProductEntity;
 import com.api.product.repository.ProductRepository;
 
@@ -24,13 +22,6 @@ public class ProductService {
     
 
     public ProductEntity createProduct(ProductDTO productDTO) { 
-        if (productDTO.getName() == null || productDTO.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException(AppConstants.PRODUCT_NAME_NULL);
-        }
-        
-        if (productDTO.getPrice() <= 0) {
-            throw new IllegalArgumentException(AppConstants.PRICE_MORE_ZERO);
-        }
         productDTO.setId(null);
         ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
         return productRepository.save(product);
@@ -42,34 +33,26 @@ public class ProductService {
 
     public ProductEntity getById(Long id) {
         return productRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(id));
+            .orElseThrow(() -> new RuntimeException(AppConstants.PRODUCT_NOT_FOUND));
     } 
 
     public String deleteById(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException(AppConstants.PRODUCT_ID_NULL);
+            throw new RuntimeException(AppConstants.PRODUCT_ID_NULL);
         }
 
         if (!productRepository.existsById(id)) {
-            throw new ResourceNotFoundException(id);
+            throw new RuntimeException(AppConstants.PRODUCT_NOT_FOUND);
         }
         productRepository.deleteById(id);
         return (AppConstants.DELETE_COMPLETE + id); 
     }
 
     public ProductEntity updateProduct(ProductDTO productDTO) {
-        if (productDTO.getName() == null || productDTO.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException(AppConstants.PRODUCT_NAME_NULL);
-        }
-        
-        if (productDTO.getPrice() <= 0) {
-            throw new IllegalArgumentException(AppConstants.PRICE_MORE_ZERO);
-        }
         ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
         
         productRepository.findById(product.getId())
-            .orElseThrow(() -> new ResourceAccessException(AppConstants.PRODUCT_NOT_FOUND + product.getId()));
-
+            .orElseThrow(() -> new RuntimeException(AppConstants.PRODUCT_NOT_FOUND));
         return productRepository.save(product);
     }
 

@@ -1,5 +1,9 @@
 package com.api.product.model;
 
+import java.math.BigDecimal;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,8 +19,10 @@ public class ProductEntity {
 
     @Column(name="name")
     private String name;
+
     @Column(name="price")
-    private double price;
+    private BigDecimal price;
+    
     @Column(name="description")
     private String description;
 }
