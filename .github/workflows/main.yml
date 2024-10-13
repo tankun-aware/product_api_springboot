@@ -41,3 +41,8 @@ jobs:
   
       - name: Run Cypress tests
         run: npx cypress run --spec ./cypress/e2e/
+
+      - name: Select all users
+        run: |
+          docker exec -i postgres-container psql -h localhost -U testuser -d test_name -c "SELECT * FROM users;"
+
