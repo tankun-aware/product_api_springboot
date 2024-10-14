@@ -17,8 +17,6 @@ import lombok.Data;
 @Data
 public class ProfileAuthenticated implements UserDetails {
 
-    // private static final long serialVersionUID = 1L;
-
     private Long id;
 
     private String username;
