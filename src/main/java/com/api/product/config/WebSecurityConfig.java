@@ -65,6 +65,7 @@ public class WebSecurityConfig  {
                 .requestMatchers("/api/products/delete", "/api/products/update", "/api/account/profile/all").hasRole("ADMIN")
                 .requestMatchers("/api/account/profile").authenticated()
                 .requestMatchers("/api/account/profile/edit").authenticated()
+                .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(exceptions -> exceptions
