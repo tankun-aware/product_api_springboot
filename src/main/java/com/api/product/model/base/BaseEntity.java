@@ -20,10 +20,10 @@ public abstract class BaseEntity implements Serializable {
     @JsonIgnore
     private Long id;
 
-    @Version
-    @Column(name = "version")
-    @JsonIgnore
-    private Integer version;
+    // @Version
+    // @Column(name = "version")
+    // @JsonIgnore
+    // private Integer version;
 
     private String createdBy;
 
