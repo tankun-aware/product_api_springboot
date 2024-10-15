@@ -19,5 +19,7 @@ public class AppConstants {
     public static final String PRICE_NULL ="Price is required";
     public static final String PRICE_MORE_ZERO = "Product price must be greater than zero";
     public static final String DRESCRIPTION_LENGTH ="Description must not exceed 2000 characters in length.";
+    public static final String USERNAME_NOT_FOUND = "Username is not found";
+    public static final String ROLE_NULL = "Role is required";
 
 }

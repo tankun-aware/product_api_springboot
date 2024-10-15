@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import com.api.product.constant.AppConstants;
 import com.api.product.dto.LoginDTO;
 import com.api.product.dto.RegisterDTO;
+import com.api.product.dto.AppointRoleDTO;
 import com.api.product.model.UserEntity;
 import com.api.product.repository.RoleRepository;
 import com.api.product.repository.UserRepository;
@@ -79,28 +80,40 @@ public class AuthService {
         user.setPhoneNumber(registerDTO.getPhoneNumber());
         user.setAddress(registerDTO.getAddress());
 
-        Set<String> strRoles = registerDTO.getRole();
+        RoleEntity userRole = roleRepository.findByName(ERole.ROLE_USER)
+        .orElseThrow(() -> new RuntimeException(AppConstants.ROLE_NOT_FOUND));
+    
+        Set<RoleEntity> roles = new HashSet<>();
+        roles.add(userRole);
+
+        user.setRoles(roles);
+        return userRepository.save(user);
+    }
+
+
+    public UserEntity appointRole(AppointRoleDTO appointRoleDTO) {
+        UserEntity user = userRepository.findByUsername(appointRoleDTO.getUsername())
+            .orElseThrow(() -> new RuntimeException(AppConstants.USERNAME_NOT_FOUND));
+        
+        Set<String> strRoles = appointRoleDTO.getRole(); 
         Set<RoleEntity> roles = new HashSet<>();
 
-        if (strRoles == null) {
-            RoleEntity userRole = roleRepository.findByName(ERole.ROLE_USER)
-                .orElseThrow(() -> new RuntimeException(AppConstants.ROLE_NOT_FOUND));
-            roles.add(userRole);
-        } else { 
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        RoleEntity adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                            .orElseThrow(() -> new RuntimeException(AppConstants.ROLE_NOT_FOUND));
-                        roles.add(adminRole);
-                        break;
-                    default:
-                        RoleEntity userRole = roleRepository.findByName(ERole.ROLE_USER)
-                            .orElseThrow(() -> new RuntimeException(AppConstants.ROLE_NOT_FOUND));
-                        roles.add(userRole);
-                }
-            });
-        }
+        strRoles.forEach(role -> {
+            switch (role.toLowerCase()) {
+                case "user":
+                    RoleEntity userRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException(AppConstants.ROLE_NOT_FOUND));
+                    roles.add(userRole);
+                    break;
+                case "admin":
+                    RoleEntity adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                        .orElseThrow(() -> new RuntimeException(AppConstants.ROLE_NOT_FOUND));
+                    roles.add(adminRole);
+                    break; 
+                default:
+                    throw new RuntimeException(AppConstants.ROLE_NOT_FOUND);
+            }
+        });
 
         user.setRoles(roles);
         return userRepository.save(user);

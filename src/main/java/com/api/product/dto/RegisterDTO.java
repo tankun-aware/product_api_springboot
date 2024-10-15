@@ -24,7 +24,5 @@ public class RegisterDTO {
 
     @Size(max = 1000, message = AppConstants.ADDRESS_LENGTH)
     private String address; 
-
-    private Set<String> role;
 }
 

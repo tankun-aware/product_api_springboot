@@ -2,15 +2,19 @@ package com.api.product.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.product.model.UserEntity;
+import com.api.product.dto.AppointRoleDTO;
 import com.api.product.dto.LoginDTO;
 import com.api.product.dto.RegisterDTO;
 import com.api.product.exception.JwtResponse;
@@ -48,6 +52,13 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterDTO registerDTO) { 
 		UserEntity user = authService.register(registerDTO);
 		return ResponseEntity.ok(new MessageResponse(user, "success"));
+    }
+
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/appointrole")
+    public ResponseEntity<UserEntity> appointRole(@Valid @RequestBody AppointRoleDTO appointRoleDTO) {
+        UserEntity updatedUser = authService.appointRole(appointRoleDTO);
+        return ResponseEntity.ok(updatedUser);
     }
 
 }
